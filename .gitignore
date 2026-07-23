@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.eggs/
+.pytest_cache/
+
+# Environment
+.venv/
+venv/
+env/
+
+# Outputs / data
+output/
+*.csv
+*.json
+!examples/**/*.json
+
+# generated artifacts
+output/
+evidence_synth.egg-info/

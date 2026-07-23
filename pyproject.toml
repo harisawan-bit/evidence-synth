@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "evidence-synth"
+version = "0.1.0"
+description = "Evidence Synthesis Automation Framework - PRISMA-compliant systematic review pipeline: search, dedup, AI screening, data extraction, and meta-analysis."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Mehvar / RCC" }]
+keywords = ["systematic-review", "meta-analysis", "PRISMA", "evidence-synthesis", "research-automation", "literature-review"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = [
+    "requests>=2.28",
+    "scipy>=1.9",
+    "numpy>=1.23",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.0"]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+evidence-synth = "evidence_synth.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["evidence_synth*"]
