@@ -65,6 +65,21 @@ def cmd_run(args) -> int:
     return 0
 
 
+def cmd_novelty(args) -> int:
+    from .novelty import scan
+
+    res = scan(args.topic, args.query, email=args.email,
+               new_rct_window_years=args.window)
+    print(res.summary())
+    if args.out:
+        import os, json
+        os.makedirs(args.out, exist_ok=True)
+        with open(os.path.join(args.out, "novelty.json"), "w", encoding="utf-8") as f:
+            json.dump(res.__dict__, f, indent=2, default=list)
+        print(f"\nWrote {args.out}/novelty.json")
+    return 0
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
         prog="evidence-synth",
@@ -84,6 +99,14 @@ def main(argv=None) -> int:
     r.add_argument("--measure", default="OR", choices=["OR", "RR", "HR"])
     r.add_argument("--out", default="output")
     r.set_defaults(func=cmd_run)
+
+    n = sub.add_parser("novelty", help="Scan topic saturation before starting a review.")
+    n.add_argument("--topic", required=True, help="Human-readable topic label.")
+    n.add_argument("--query", required=True, help="Core PICO/base query for PubMed.")
+    n.add_argument("--email", default="", help="Contact email for NCBI.")
+    n.add_argument("--window", type=int, default=4, help="Years after latest MA to count new RCTs.")
+    n.add_argument("--out", default="output")
+    n.set_defaults(func=cmd_novelty)
 
     args = parser.parse_args(argv)
     return args.func(args)

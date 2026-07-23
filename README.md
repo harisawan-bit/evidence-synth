@@ -10,10 +10,27 @@ pipeline for systematic reviews and meta-analysis.
 ## What it does
 
 ```
-search  ->  deduplicate  ->  screen (AI-assisted)  ->  extract  ->  meta-analyze  ->  report
+novelty  ->  search  ->  deduplicate  ->  screen (AI-assisted)  ->  extract  ->  meta-analyze  ->  report
 ```
 
-- **Search** — live PubMed E-utilities (`pubmed_search`) or a bundled offline
+### 0. Novelty / evidence-saturation scan (the differentiator)
+
+Before spending months on a review, find out if it's already been done.
+`evidence-synth novelty` queries PubMed live for:
+
+- how many existing meta-analyses / systematic reviews cover the topic,
+- the most recent MA year, and how many *new* primary RCTs have appeared since,
+- a scored **GO / CAUTION / NO-GO** verdict via a gap-vs-saturation ratio.
+
+```bash
+evidence-synth novelty --topic "Finerenone in CKD" --query "finerenone chronic kidney disease"
+# -> GO  (14 new RCTs vs 20 existing reviews; novelty ratio 0.41)
+```
+
+> PROSPERO overlap still requires a manual browser check (JS-rendered); the
+> scanner flags it for you rather than claiming automation it can't do.
+
+### 1. Search — live PubMed E-utilities (`pubmed_search`) or a bundled offline
   sample corpus so the whole framework runs with zero network access.
 - **Deduplicate** — exact (DOI / normalized title) + fuzzy (token-sorted Jaccard)
   merge, with a full merge map for reproducibility.
@@ -40,6 +57,9 @@ pip install -e ".[openai]"
 ## Quick start
 
 ```bash
+# 0. Check if a topic is worth a new review (live PubMed)
+evidence-synth novelty --topic "Finerenone in CKD" --query "finerenone chronic kidney disease"
+
 # Full offline demo: sample corpus -> dedup -> screen -> PRISMA + forest plot
 evidence-synth demo
 
@@ -72,6 +92,7 @@ print(p.result.summary())
 
 ```
 evidence_synth/
+  novelty.py      novelty / evidence-saturation scanner (GO/CAUTION/NO-GO)
   search.py       PubMed E-utilities + bundled sample corpus
   dedup.py        deterministic + fuzzy deduplication
   screening.py    heuristic / OpenAI backends + Cohen's kappa
