@@ -13,9 +13,9 @@ from __future__ import annotations
 import os
 from typing import Callable, List, Optional
 
-from .models import Study, Decision
-from . import dedup, screening, extraction, prisma, forest
-from .search import sample_corpus, pubmed_search
+from . import dedup, extraction, forest, prisma, screening
+from .models import Study
+from .search import pubmed_search, sample_corpus
 
 
 class Pipeline:

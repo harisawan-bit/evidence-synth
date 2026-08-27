@@ -50,7 +50,7 @@ def _efetch_years(ids: List[str]) -> List[str]:
         return []
     url = f"{EUTILS}/efetch.fcgi?db=pubmed&retmode=xml&id={','.join(ids)}"
     xml = urllib.request.urlopen(url, timeout=60).read().decode("utf-8", "ignore")
-    return re.findall(r"<PubDate>.*?<Year>(\d{4})</Year>", xml, re.S)
+    return re.findall(r"<PubDate>.*?<Year>(\d{4})</Year>", xml, re.DOTALL)
 
 
 @dataclass

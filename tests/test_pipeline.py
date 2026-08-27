@@ -4,8 +4,8 @@ import xml.dom.minidom as minidom
 
 from evidence_synth import Pipeline
 from evidence_synth.models import Decision
+from evidence_synth.novelty import _score
 from evidence_synth.screening import cohen_kappa
-from evidence_synth.novelty import NoveltyResult, _score
 
 
 def _elig(s):

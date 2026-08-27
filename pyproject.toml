@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "evidence-synth"
-version = "0.1.0"
+version = "0.2.0"
 description = "Evidence Synthesis Automation Framework - PRISMA-compliant systematic review pipeline: search, dedup, AI screening, data extraction, and meta-analysis."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -26,10 +26,29 @@ dependencies = [
 
 [project.optional-dependencies]
 openai = ["openai>=1.0"]
-dev = ["pytest>=7.0"]
+dev = ["pytest>=7.0", "ruff>=0.4"]
 
 [project.scripts]
 evidence-synth = "evidence_synth.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["evidence_synth*"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+
+[tool.ruff.lint]
+# A focused, behavior-preserving rule set: import hygiene, unused/broken
+# imports, safe modernizations, and a few quality rules.
+select = ["E4", "E7", "E9", "F", "I", "FURB", "RUF", "B", "PLR0402"]
+# E501: long lines (e.g. the regex in extraction.py) are acceptable here.
+# B008/B904: no call-in-default-arg / raise-without-cause patterns to police.
+# RUF059/ISC004: cosmetic unpacking / implicit-string-concat edge cases.
+ignore = ["E501", "B008", "B904", "RUF059", "ISC004", "RUF001"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["evidence_synth"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["PLR0402"]

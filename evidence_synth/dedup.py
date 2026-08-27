@@ -8,8 +8,8 @@ Returns the surviving studies plus a mapping of which IDs were merged.
 """
 from __future__ import annotations
 
-import re
 from typing import Dict, List, Tuple
+
 from .models import Study
 from .search import _norm_title
 

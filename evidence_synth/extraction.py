@@ -7,15 +7,15 @@ heterogeneity reported as I^2 and Cochrane's Q.
 """
 from __future__ import annotations
 
-import re
 import math
-from dataclasses import dataclass, field
+import re
+from dataclasses import dataclass
 from typing import List, Optional
 
 import numpy as np
 from scipy import stats
 
-from .models import Study, Decision
+from .models import Decision, Study
 
 
 @dataclass
@@ -38,7 +38,7 @@ class EffectSize:
 _MEASURE_RE = re.compile(
     r"\b(OR|RR|HR)\s*[=:]?\s*([0-9]*\.?[0-9]+)\s*[,;]?\s*"
     r"(?:95%\s*CI\s*)?\(?\s*([0-9]*\.?[0-9]+)\s*[-–to]+\s*([0-9]*\.?[0-9]+)\s*\)?",
-    re.I,
+    re.IGNORECASE,
 )
 
 

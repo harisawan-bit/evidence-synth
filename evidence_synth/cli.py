@@ -18,7 +18,6 @@ import sys
 
 from .models import Decision
 from .pipeline import Pipeline
-from . import screening
 
 
 def _default_eligibility():
@@ -72,7 +71,8 @@ def cmd_novelty(args) -> int:
                new_rct_window_years=args.window)
     print(res.summary())
     if args.out:
-        import os, json
+        import json
+        import os
         os.makedirs(args.out, exist_ok=True)
         with open(os.path.join(args.out, "novelty.json"), "w", encoding="utf-8") as f:
             json.dump(res.__dict__, f, indent=2, default=list)
