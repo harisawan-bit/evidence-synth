@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import re
 from typing import List
+
 from .models import Study
 
 
@@ -50,17 +51,17 @@ def _parse_pubmed_xml(xml: str, ids: List[str]) -> List[Study]:
     """Minimal PubMed XML parser (no heavy deps)."""
     studies: List[Study] = []
     # Split into <PubmedArticle> blocks
-    articles = re.findall(r"<PubmedArticle>.*?</PubmedArticle>", xml, re.S)
+    articles = re.findall(r"<PubmedArticle>.*?</PubmedArticle>", xml, re.DOTALL)
     for art in articles:
         pmid_m = re.search(r"<PMID[^>]*>(\d+)</PMID>", art)
         pmid = pmid_m.group(1) if pmid_m else "?"
-        title_m = re.search(r"<ArticleTitle>(.*?)</ArticleTitle>", art, re.S)
+        title_m = re.search(r"<ArticleTitle>(.*?)</ArticleTitle>", art, re.DOTALL)
         title = re.sub(r"<[^>]+>", "", title_m.group(1)).strip() if title_m else ""
-        abs_m = re.search(r"<AbstractText[^>]*>(.*?)</AbstractText>", art, re.S)
+        abs_m = re.search(r"<AbstractText[^>]*>(.*?)</AbstractText>", art, re.DOTALL)
         abstract = re.sub(r"<[^>]+>", "", abs_m.group(1)).strip() if abs_m else ""
-        year_m = re.search(r"<PubDate>.*?<Year>(\d{4})</Year>", art, re.S)
+        year_m = re.search(r"<PubDate>.*?<Year>(\d{4})</Year>", art, re.DOTALL)
         year = int(year_m.group(1)) if year_m else None
-        journal_m = re.search(r"<Title>(.*?)</Title>", art, re.S)
+        journal_m = re.search(r"<Title>(.*?)</Title>", art, re.DOTALL)
         journal = journal_m.group(1) if journal_m else ""
         studies.append(
             Study(

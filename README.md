@@ -1,5 +1,10 @@
 # evidence-synth
 
+[![CI](https://github.com/harisawan-bit/evidence-synth/actions/workflows/ci.yml/badge.svg)](https://github.com/harisawan-bit/evidence-synth/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/evidence-synth.svg)](https://pypi.org/project/evidence-synth/)
+![Python](https://img.shields.io/badge/python-3.9%20%7C%203.11%20%7C%203.12-blue.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 **Evidence Synthesis Automation Framework** — a PRISMA-compliant, end-to-end
 pipeline for systematic reviews and meta-analysis.
 

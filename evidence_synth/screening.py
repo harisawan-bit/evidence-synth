@@ -13,10 +13,9 @@ Agreement with a human gold standard is measured with Cohen's kappa.
 from __future__ import annotations
 
 import os
-import re
 from typing import Callable, List, Optional
 
-from .models import Study, Decision, ScreeningDecision
+from .models import Decision, ScreeningDecision, Study
 
 # A PICO eligibility function: given a Study, return (decision, reason).
 EligibilityFn = Callable[[Study], tuple[Decision, str]]
@@ -71,7 +70,7 @@ def openai_screener(model: str = "gpt-4o-mini") -> EligibilityFn:
             dec = data.get("decision", "exclude").lower()
             decision = Decision.INCLUDE if dec == "include" else Decision.EXCLUDE
             return decision, data.get("reason", "")
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             return Decision.UNCERTAIN, f"openai error: {e}"
 
     return fn
@@ -110,7 +109,7 @@ def cohen_kappa(a: List[Decision], b: List[Decision]) -> float:
     Decisions are treated as the 3-class label set {include, exclude, uncertain}.
     """
     labels = [Decision.INCLUDE, Decision.EXCLUDE, Decision.UNCERTAIN]
-    idx = {l: i for i, l in enumerate(labels)}
+    idx = {label: i for i, label in enumerate(labels)}
     n = len(labels)
     cm = [[0] * n for _ in range(n)]
     for x, y in zip(a, b):

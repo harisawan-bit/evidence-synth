@@ -6,7 +6,8 @@ set of studies. No external dependencies.
 from __future__ import annotations
 
 from typing import Dict, List
-from .models import Study, Decision
+
+from .models import Decision, Study
 
 
 def _count(studies: List[Study]) -> Dict[str, int]:

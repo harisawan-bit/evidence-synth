@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from typing import List
+
 from .extraction import EffectSize, MetaResult
 
 
@@ -13,8 +14,8 @@ def forest_plot(effects: List[EffectSize], result: MetaResult, path: str) -> str
     h = header + len(effects) * row_h + 80
     # x-scale: log space mapped to pixels; center on pooled estimate
     vals = [math_log(e.estimate) for e in effects]
-    lo = min(vals + [result.pooled_log]) - 0.4
-    hi = max(vals + [result.pooled_log]) + 0.4
+    lo = min([*vals, result.pooled_log]) - 0.4
+    hi = max([*vals, result.pooled_log]) + 0.4
     x0, x1 = 200, 660
     def px(v):
         return x0 + (v - lo) / (hi - lo) * (x1 - x0)
