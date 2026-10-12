@@ -51,6 +51,22 @@ evidence-synth novelty --topic "Finerenone in CKD" --query "finerenone chronic k
 - **Report** — PRISMA 2020 **flow diagram** (SVG), a **forest plot** (SVG), and a
   machine-readable `studies.json`.
 
+### What's new in 0.3.0
+
+- **Forest plot hardening** — study ids and measure names are XML-escaped
+  before they are written into the SVG, so a study id containing `&`, `<` or
+  `"` can no longer corrupt or inject into the plot markup. An empty effect
+  list now renders a valid (annotated) SVG instead of raising, and a
+  non-positive estimate or CI bound raises a clear `ValueError` rather than
+  crashing inside `math.log`. Box-width scaling also hoists the max-weight
+  computation out of the per-row loop (was O(n²)).
+- **Deduplication correctness** — promoting a DOI onto a DOI-less survivor no
+  longer rewrites the key the dedup loop matches on. Previously the survivor's
+  `dedupe_key` was mutated mid-iteration, which could silently change
+  exact-match behaviour for every later study (an unrelated title sharing the
+  promoted DOI could be swallowed). DOI enrichment is preserved; only the
+  matching key is now frozen for the loop.
+
 ## Install
 
 ```bash

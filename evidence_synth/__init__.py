@@ -8,5 +8,5 @@ from .novelty import NoveltyResult
 from .novelty import scan as scan_novelty
 from .pipeline import Pipeline
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __all__ = ["NoveltyResult", "Pipeline", "ScreeningDecision", "Study", "scan_novelty"]

@@ -45,12 +45,18 @@ def deduplicate(studies: List[Study], fuzzy_threshold: float = 0.92) -> Tuple[Li
     survivors: List[Study] = []
     merged: Dict[str, str] = {}
     # assign dedupe_key for transparency
+    # ``match_keys`` freezes each study's exact-match key for the whole loop.
+    # ``dedupe_key`` is the public, human-facing field and may be enriched
+    # later (e.g. when a DOI is promoted onto a survivor), so it must NOT be
+    # what this loop matches on.
+    match_keys: Dict[str, str] = {}
     for s in studies:
         s.dedupe_key = similarity_key(s)
+        match_keys[s.id] = s.dedupe_key
 
     for s in studies:
         # exact key match
-        exact = [x for x in survivors if x.dedupe_key == s.dedupe_key]
+        exact = [x for x in survivors if match_keys[x.id] == match_keys[s.id]]
         if exact:
             merged[s.id] = exact[0].id
             continue
@@ -62,7 +68,10 @@ def deduplicate(studies: List[Study], fuzzy_threshold: float = 0.92) -> Tuple[Li
                 break
         if hit:
             merged[s.id] = hit.id
-            # keep the version with a DOI if available
+            # keep the version with a DOI if available. ``match_keys`` is left
+            # untouched: it is what this loop matches on, so rewriting the
+            # survivor's key after a DOI promotion would silently change
+            # exact-match behaviour for every later study.
             if not doi_of(hit) and doi_of(s):
                 hit.doi = s.doi
                 hit.dedupe_key = similarity_key(hit)

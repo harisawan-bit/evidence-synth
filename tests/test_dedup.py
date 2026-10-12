@@ -88,6 +88,40 @@ def test_idempotent_on_second_pass():
     assert merged2 == {}
 
 
+def test_doi_promotion_does_not_corrupt_later_exact_matching():
+    # Regression: DOI promotion must not rewrite the key the loop matches on.
+    #
+    # Scenario: survivor A has title "T" and no DOI. B fuzzy-matches A and
+    # promotes DOI "10.1/b" onto A. A LATER study C carries DOI "10.1/b" but
+    # has a completely different title. Before the fix, promoting the DOI
+    # rewrote A's match key to "doi:10.1/b", so C exact-matched the promoted
+    # survivor A and was silently swallowed even though it shares no title
+    # with A. The match key must stay frozen at A's original title key.
+    base = "Tissue plasminogen activator in acute ischaemic stroke outcomes"
+    studies = [
+        Study(id="A", title=base, doi=None),
+        Study(id="B", title=base + " outcomes", doi="10.1/b"),
+        Study(id="C", title="Unrelated report on vitamin D and fracture", doi="10.1/b"),
+    ]
+    survivors, merged = deduplicate(studies)
+
+    # A survives; B fuzzy-merges into it and its DOI is promoted onto A.
+    assert merged.get("B") == "A"
+    assert survivors[0].id == "A"
+    assert survivors[0].doi == "10.1/b"
+    # C carries the same DOI but a completely different title. Before the
+    # fix, promoting the DOI rewrote A's loop match key to "doi:10.1/b", so
+    # C exact-matched the promoted survivor A and was silently swallowed
+    # (merged into A) despite sharing no title with it. With the match key
+    # frozen at A's original title key, C is NOT swallowed -- it survives on
+    # its own, which is the correct conservative behaviour: an unrelated
+    # title must never be dropped just because a DOI was promoted upstream.
+    assert "C" not in merged
+    assert [s.id for s in survivors] == ["A", "C"]
+    # The public dedupe_key is still enriched to reflect the DOI.
+    assert survivors[0].dedupe_key.startswith("doi:")
+
+
 def test_similarity_key_doi_preferred():
     s = _study("A", "Some title", doi="10.1000/a")
     assert similarity_key(s).startswith("doi:")
